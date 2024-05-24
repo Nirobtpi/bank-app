@@ -56,39 +56,62 @@
                                         <p class="text-center small">Enter your personal details to create account</p>
                                     </div>
 
+                                    @if(Session('success'))
+                                        <div class="alert alert-success">
+                                            {{ Session('success') }}
+                                        </div>
+                                    @endif
+
                                     <form method="POST" action="{{ url('admin/registation') }}"
                                         class="row g-3 needs-validation">
                                         @csrf
                                         <div class="col-12">
                                             <label for="yourName" class="form-label">Your Name</label>
                                             <input type="text" name="name" class="form-control" id="yourName">
-                                            <div class="invalid-feedback">Please, enter your name!</div>
+                                            @error('name')
+                                            <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
 
                                         <div class="col-12">
                                             <label for="yourEmail" class="form-label">Your Email</label>
                                             <input type="email" name="email" class="form-control" id="yourEmail">
-                                            <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                                            @error('email')
+                                            <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
 
                                         <div class="col-12">
                                             <label for="yourPassword" class="form-label">Password</label>
                                             <input type="password" name="password" class="form-control"
                                                 id="yourPassword">
-                                            <div class="invalid-feedback">Please enter your password!</div>
+                                            @error('password')
+                                            <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col-12">
                                             <label for="yourPassword" class="form-label">Retype Password</label>
                                             <input type="password" name="password_confirmation" class="form-control"
                                                 id="yourPassword">
-                                            <div class="invalid-feedback">Please enter your password!</div>
                                         </div>
                                         <div class="col-md-12">
                                             <label for="inputState" class="form-label">Account Type</label>
-                                            <select id="inputState" class="form-select">
-                                                <option selected="">Choose...</option>
-                                                <option>...</option>
+                                            <select id="inputState" name="account_type" class="form-select">
+                                                <option selected="" disabled>Choose...</option>
+                                                <option value="sallery">Sallery Account</option>
+                                                <option value="normal_account">Normal Account</option>
                                             </select>
+                                            @error('account_type')
+                                            <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                          <div class="col-12">
+                                            <label for="blance" class="form-label">Blance</label>
+                                            <input type="text" name="blance" class="form-control"
+                                                id="blance">
+                                            @error('blance')
+                                            <p class="text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                         <div class="col-12">
                                             <button class="btn btn-primary w-100" type="submit">Create

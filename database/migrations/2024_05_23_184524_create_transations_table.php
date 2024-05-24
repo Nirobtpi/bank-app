@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('transation_type');
             $table->double('ammount')->nullable();
             $table->double('fee')->nullable();
+            $table->date('Withdraw_date')->nullable();
             $table->timestamps();
         });
     }

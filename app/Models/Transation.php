@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Transation extends Model
 {
     use HasFactory;
+     public function adminName(){
+        return $this->belongsTo(Admin::class,'admin_id');
+    }
 }
