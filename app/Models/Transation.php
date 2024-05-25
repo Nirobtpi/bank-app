@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Transation extends Model
 {
     use HasFactory;
+
+    protected $guarded=[];
      public function adminName(){
-        return $this->belongsTo(Admin::class,'admin_id');
+        return $this->belongsTo(User::class,'user_id');
     }
 }

@@ -32,7 +32,7 @@
                                         <i class="bi bi-currency-dollar"></i>
                                     </div>
                                     <div class="ps-3">
-                                        <h6>{{ Auth::guard('admin')->user()->blance }}</h6>
+                                        <h6>{{ Auth::user()->blance }}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -90,6 +90,7 @@
                                             <th scope="col">Name</th>
                                             <th scope="col">Amount</th>
                                             <th scope="col">Transation Date</th>
+                                            <th scope="col">Transation Type</th>
                                             <th scope="col">Fee</th>
                                         </tr>
                                     </thead>
@@ -99,8 +100,9 @@
                                                 <td>{{ $loop->index =1 }}</td>
                                             <td><a href="#" class="text-primary fw-bold">{{ $trns->adminName->name }}</a></td>
                                             <td>{{ $trns->ammount }}</td>
-                                            <td class="fw-bold">{{ $trns->Withdraw_date }}</td>
-                                            <td>{{ $trns->fee }}</td>
+                                            <td class="fw-bold">{{ $trns->withdraw_date }}</td>
+                                            <td class="fw-bold">{{ $trns->transation_type }}</td>
+                                            <td>{{ $trns->fee ? $trns->fee : 'No Charge' }}</td>
                                         </tr>
                                         @empty
                                             <tr><td colspan="12"><h2 class="text-center text-danger">No Data Found</h2></td></tr>

@@ -29,6 +29,12 @@ Route::prefix('admin')->group(function(){
 
     Route::group(['middleware'=>['admin']], function(){
         Route::get('/dashboard',[DashboardController::class,'dashboard'])->name('dashboard');
+        Route::get('/deposit',[DashboardController::class,'deposit'])->name('deposit');
+        Route::get('/add-deposit',[DashboardController::class,'depositUrl'])->name('admin.deposit');
+        Route::Post('/add-deposit/{id}',[DashboardController::class,'addDeposit'])->name('add.deposit');
+        Route::get('/withdrawal-list',[DashboardController::class,'getWithdraw'])->name('admin.withdraw');
+        Route::get('/withdraw',[DashboardController::class,'withdrawUrl'])->name('add.withdrawPage');
+        Route::post('/add-withdraw/{id}',[DashboardController::class,'addWithdraw'])->name('add.withdraw');
         Route::get('/logout',[LoginController::class,'logout'])->name('user.logout');
     });
 

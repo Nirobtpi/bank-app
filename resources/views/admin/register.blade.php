@@ -98,8 +98,8 @@
                                             <label for="inputState" class="form-label">Account Type</label>
                                             <select id="inputState" name="account_type" class="form-select">
                                                 <option selected="" disabled>Choose...</option>
-                                                <option value="sallery">Sallery Account</option>
-                                                <option value="normal_account">Normal Account</option>
+                                                <option value="individual">Individual</option>
+                                                <option value="busuness">Business</option>
                                             </select>
                                             @error('account_type')
                                             <p class="text-danger">{{ $message }}</p>

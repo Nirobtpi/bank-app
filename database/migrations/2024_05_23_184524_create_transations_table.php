@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('transations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admin_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->string('transation_type');
             $table->double('ammount')->nullable();
             $table->double('fee')->nullable();
-            $table->date('Withdraw_date')->nullable();
+            $table->date('withdraw_date')->nullable();
             $table->timestamps();
         });
     }
