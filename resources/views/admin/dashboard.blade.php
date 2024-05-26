@@ -97,7 +97,7 @@
                                     <tbody>
                                         @forelse ($allTrangsion as $trns)
                                             <tr>
-                                                <td>{{ $loop->index =1 }}</td>
+                                                <td>{{ $loop->index +1 }}</td>
                                             <td><a href="#" class="text-primary fw-bold">{{ $trns->adminName->name }}</a></td>
                                             <td>{{ $trns->ammount }}</td>
                                             <td class="fw-bold">{{ $trns->withdraw_date }}</td>

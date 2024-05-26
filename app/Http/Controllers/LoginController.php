@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Hash;
 class LoginController extends Controller
 {
     public function login(){
+        if(Auth::check()){
+           return redirect('admin/dashboard');
+        }
         return view('admin.login');
     }
     public function register(){
