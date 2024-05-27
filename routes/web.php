@@ -24,6 +24,7 @@ Route::prefix('admin')->group(function(){
     Route::get('/register',[LoginController::class,'register'])->name('admin.register');
     Route::post('/registation',[LoginController::class,'user_register'])->name('admin.registation');
     Route::post('/login',[LoginController::class,'user_login'])->name('user.login');
+    // Route::get('/me/{i}',[DashboardController::class,'calculateWithdrawFee']);
     
 
 

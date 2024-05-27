@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;
 use App\Models\User;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -65,88 +66,78 @@ class DashboardController extends Controller
             'date'=>['required'],
             'transation_type'=>['required'],
         ]);
-    //    return $date=date('D',strtotime($request->date));
-        // Every Friday withdrawal is free of charge 
-        $ten=Transation::where('transation_type','withdraw')->where('user_id',Auth::user()->id)->count();
-        if($request->ammount < Auth::user()->blance){
-            
-            if(date('m') == date('m',strtotime($request->date)) AND $ten <0){
-                return 'Ok';
-                if($request->ammount >= 5000){
-                    // return 'Ok';
-                    Transation::create([
-                        'user_id'=>$id,
-                        'ammount'=>$request->ammount,
-                        'transation_type'=>$request->transation_type,
-                        'Withdraw_date'=>$request->date,
-                    ]);
-                    $admin=User::findOrFail($id);
-            
-                    User::findOrFail($id)->update([
-                        'blance'=>$admin->blance - $request->ammount,
-                    ]);
-                }
-                return back()->with('success','Withdraw Success Fully');
-            }
 
-            if('Friday' == date('D',strtotime($request->date))){
-                Transation::create([
-                    'user_id'=>$id,
-                    'ammount'=>$request->ammount,
-                    'transation_type'=>$request->transation_type,
-                    'Withdraw_date'=>$request->date,
-                ]);
-                $admin=User::findOrFail($id);
+        $user=User::findOrFail($id);
         
-                User::findOrFail($id)->update([
-                    'blance'=>$admin->blance - $request->ammount,
-                ]);
-            }
 
-            if(Auth::user()->account_type == 'individual'){
+        if ($user->blance > $request->ammount){
             
-                $totalFee=$request->ammount * 0.015;
-                $totalAmmount=$request->ammount + $totalFee;
+            $fee=$this->calculateWithdrawFee($request->ammount);
+            $totalAmmount=$request->ammount + $fee;
 
-                Transation::create([
-                    'user_id'=>$id,
-                    'ammount'=>$request->ammount,
-                    'transation_type'=>$request->transation_type,
-                    'Withdraw_date'=>$request->date,
-                    'fee'=>$totalFee,
-                ]);
-                $admin=User::findOrFail($id);
-        
-                User::findOrFail($id)->update([
-                    'blance'=>$admin->blance - $totalAmmount,
-                ]);
-            }
-            
+            // if ($user->ammount > $totalAmmount) {
+            //     // return response()->json(['message' => 'Insufficient balance'], 400);
+            //     return redirect()->route('admin.withdraw')->with('success','Insufficient balance');
 
-            if(Auth::user()->account_type == 'busuness'){
-            
-                $totalFee=$request->ammount * 0.025;
-                $totalAmmount=$request->ammount + $totalFee;
+            // }
 
-                Transation::create([
-                    'user_id'=>$id,
-                    'ammount'=>$request->ammount,
-                    'transation_type'=>$request->transation_type,
-                    'Withdraw_date'=>$request->date,
-                    'fee'=>$totalFee,
-                ]);
-                $admin=User::findOrFail($id);
-        
-                User::findOrFail($id)->update([
-                    'blance'=>$admin->blance - $totalAmmount,
-                ]);
-            }
-            return back()->with('success','Withdraw Success Fully');
+            Transation::create([
+                'user_id'=>$id,
+                'ammount'=>$request->ammount,
+                'transation_type'=>$request->transation_type,
+                'Withdraw_date'=>$request->date,
+                'fee'=>$fee,
+            ]);
+            $user->update([
+                'blance'=>$user->blance - $totalAmmount,
+            ]);
+
+            return redirect()->route('admin.withdraw')->with('success','Withdraw Success Fully');
         }else{
-            return back()->with('success','INSUFFEINCENT BLANCE');
+             return redirect()->route('admin.withdraw')->with('success','Insufficient balance');
         }
-       
-        
-        
+    }
+
+    private function calculateWithdrawFee($ammount){
+        $user=Auth::user();
+        $fee=0;
+        $today= Carbon::now();
+        $monthStart=$today->copy()->startOfMonth();
+
+        $monthlyWithdraw = Transation::where('user_id', $user->id)
+            ->where('transation_type', 'withdraw')
+            ->whereBetween('withdraw_date', [$monthStart, $today])
+            ->sum('ammount');
+
+        if($user->account_type =='individual'){
+            if($today->isFriday()){
+                return 0;
+            }
+            if($ammount <= 1000){
+                return 0;
+            }else{
+                $ammount -=1000;
+            }
+            if($monthlyWithdraw <= 5000){
+                $feeAmmount=max(0,$monthlyWithdraw + $ammount - 5000);
+            }else{
+                $feeAmmount=$ammount;
+            }
+            
+            return $fee =$feeAmmount * 0.015;
+        }else{
+            if($user->account_type =='busuness'){
+                if($monthlyWithdraw <= 5000){
+                    $fee= $ammount * 0.015;
+                }elseif($monthlyWithdraw == 50000){
+                    $fee= $ammount * 0.015;
+                }
+                else{
+                    $fee= $ammount * 0.025;
+                }
+                
+            }
+          return $fee;
+        }
     }
 }
