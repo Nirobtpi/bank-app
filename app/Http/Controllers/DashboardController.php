@@ -72,27 +72,27 @@ class DashboardController extends Controller
 
         if ($user->blance > $request->ammount){
             
-            $fee=$this->calculateWithdrawFee($request->ammount);
-            $totalAmmount=$request->ammount + $fee;
+                $fee=$this->calculateWithdrawFee($request->ammount);
+                $totalAmmount=$request->ammount + $fee;
 
-            // if ($user->ammount > $totalAmmount) {
-            //     // return response()->json(['message' => 'Insufficient balance'], 400);
-            //     return redirect()->route('admin.withdraw')->with('success','Insufficient balance');
+                if ($user->ammount < $totalAmmount) {
+                    
+                    Transation::create([
+                        'user_id'=>$id,
+                        'ammount'=>$request->ammount,
+                        'transation_type'=>$request->transation_type,
+                        'Withdraw_date'=>$request->date,
+                        'fee'=>$fee,
+                    ]);
+                    $user->update([
+                        'blance'=>$user->blance - $totalAmmount,
+                    ]);
 
-            // }
+                    return redirect()->route('admin.withdraw')->with('success','Withdraw Success Fully');
 
-            Transation::create([
-                'user_id'=>$id,
-                'ammount'=>$request->ammount,
-                'transation_type'=>$request->transation_type,
-                'Withdraw_date'=>$request->date,
-                'fee'=>$fee,
-            ]);
-            $user->update([
-                'blance'=>$user->blance - $totalAmmount,
-            ]);
-
-            return redirect()->route('admin.withdraw')->with('success','Withdraw Success Fully');
+                }else{
+                    return redirect()->route('admin.withdraw')->with('success','Insufficient balance');
+                }
         }else{
              return redirect()->route('admin.withdraw')->with('success','Insufficient balance');
         }
